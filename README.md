@@ -74,5 +74,5 @@ but rather by loss of top predators. [Journal name], [volume], [pages].
 
 # Contact
 
-Rémy Denéchère — rdenechere@ucsd.edu
+Rémy Denéchère — <remy.denechere@gmail.com>
 

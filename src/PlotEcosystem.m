@@ -4,9 +4,6 @@ function PlotEcosystem(depth, pprod, sqd)
     Ftsize = 10.5; 
     %
     %% Run FEISTY: 
-    %
-    % Param for changing distance between bottom and pelagic
-    deep_distance = 1100;
     
     % parameter for FEISTY 
     param = baseparameters();
@@ -41,8 +38,8 @@ function PlotEcosystem(depth, pprod, sqd)
         Av_depth(param.ix1(5):param.ix2(5)) = Av_depth(param.ix1(5):param.ix2(5))+0.05*param.bottom;
         Av_depth(param.ix1(4):param.ix2(4)) = Av_depth(param.ix1(4):param.ix2(4))-0.05*param.bottom;
     else 
-        Av_depth((param.ix1(4)+3):param.ix2(4)) = Av_depth((param.ix1(4)+3):param.ix2(4))+ deep_distance;
-        Av_depth(param.ixR(3)) = Av_depth(param.ixR(3)) + deep_distance;
+        Av_depth((param.ix1(4)+3):param.ix2(4)) = Av_depth((param.ix1(4)+3):param.ix2(4));
+        Av_depth(param.ixR(3)) = Av_depth(param.ixR(3));
     end 
     
     % Marker size depends on biomass:--------------------------------------
@@ -125,7 +122,7 @@ function PlotEcosystem(depth, pprod, sqd)
     'YTick', [-param.bottom 0]);
 
     if param.bottom > param.mesop
-        set(gca, 'Ylim', [-1.05*param.bottom+deep_distance, max(Av_depth)+0.05*param.bottom], ...
-        'YTick', [-(param.bottom+deep_distance) 0], 'YTickLabel', [-param.bottom 0])
+        set(gca, 'Ylim', [-(1.05*param.bottom), max(Av_depth)+0.05*param.bottom], ...
+        'YTick', [-(param.bottom) 0], 'YTickLabel', [-param.bottom 0])
     end
 end
