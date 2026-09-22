@@ -22,24 +22,24 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 ## Repository structure
 ├──FIG/<br>
 ├──SRC/<br>
-│ └── Figure_paper.mlx Main script: generates Figures 1–4 <br>
-│ └── Supplementary_paper.mlx Supplementary script: generates Figures SB1–SB2 <br>
-│ └── baseparameters.m Default model parameters (physiology, sizes, interactions)<br>
-│ └── baseparam_depth.m Depth-dependent parameters (vertical habitat, feeding preferences)<br>
-│ └── baseparam_temp.m Temperature scaling of physiological rates <br>
-│ └── poem.m Main ODE solver wrapper (runs model to equilibrium) <br>
-│ └── poem_deriv.m Right-hand side of the ODE system (growth, mortality, reproduction) <br>
-│ └── calcEncounter.m Encounter rates, feeding level, and predation mortality <br>
-│ └── calcpreference.m Vertical distribution and predator–prey overlap matrix <br>
-│ └── calctemperature.m Temperature scaling using Q₁₀ and depth profiles <br>
-│ └── calcNu.m Growth rate and biomass flux between size classes <br>
-│ └── PlotEcosystem.m Food-web visualization (Fig. 1) <br>
-│ └── plotdiet_squid.m Squid diet composition plot (Fig. 3A, B) <br>
-│ └── plotmort_squid.m Squid predation mortality plot (Fig. 3C)<br>
-│ └── ciplot.m Shaded confidence-interval helper function<br>
-│ └── save_graph.m Figure export helper (PDF, PNG, SVG, EPS) <br>
-│ └── axes_formating.m Axes default formatting helper <br>
-│ └── tempdata.mat Temperature depth profiles by region (loaded by calctemperature.m)
+│ └── Figure_paper.mlx                │  Main script: generates Figures 1–4 <br>
+│ └── Supplementary_paper.mlx         │  Supplementary script: generates Figures SB1–SB2 <br>
+│ └── baseparameters.m                │  Default model parameters (physiology, sizes, interactions)<br>
+│ └── baseparam_depth.m               │  Depth-dependent parameters (vertical habitat, feeding preferences)<br>
+│ └── baseparam_temp.m                │  Temperature scaling of physiological rates <br>
+│ └── poem.m                          │  Main ODE solver wrapper (runs model to equilibrium) <br>
+│ └── poem_deriv.m                    │  Right-hand side of the ODE system (growth, mortality, reproduction) <br>
+│ └── calcEncounter.m                 │  Encounter rates, feeding level, and predation mortality <br>
+│ └── calcpreference.m                │  Vertical distribution and predator–prey overlap matrix <br>
+│ └── calctemperature.m               │  Temperature scaling using Q₁₀ and depth profiles <br>
+│ └── calcNu.m Growth                 │  rate and biomass flux between size classes <br>
+│ └── PlotEcosystem.m                 │  Food-web visualization (Fig. 1) <br>
+│ └── plotdiet_squid.m                │  Squid diet composition plot (Fig. 3A, B) <br>
+│ └── plotmort_squid.m                │  Squid predation mortality plot (Fig. 3C)<br>
+│ └── ciplot.m Shaded                 │  confidence-interval helper function<br>
+│ └── save_graph.m                    │  Figure export helper (PDF, PNG, SVG, EPS) <br>
+│ └── axes_formating.m                │  Axes default formatting helper <br>
+│ └── tempdata.mat                    │  Temperature depth profiles by region (loaded by calctemperature.m)
 
 ---
 
@@ -71,6 +71,8 @@ If you use this code, please cite:
 Denéchère, R., van Denderen, P. D., & Andersen, K. H. (2026).
 Historical squid biomass increase is not explained by rising temperature
 but rather by loss of top predators. [Journal name], [volume], [pages].
+
+!! NOT YET PUBLISHED TO COMPLETE LATER !!
 
 # Contact
 
