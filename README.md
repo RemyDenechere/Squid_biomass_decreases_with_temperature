@@ -21,8 +21,7 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 
 ## Repository structure
 ├──FIG/<br>
-├──SRC/<br>
-│ └── Figure_paper.mlx                │  Main script: generates Figures 1–4 <br>
+├──SRC/<br>│ 
 │ └── Supplementary_paper.mlx         │  Supplementary script: generates Figures SB1–SB2 <br>
 │ └── baseparameters.m                │  Default model parameters (physiology, sizes, interactions)<br>
 │ └── baseparam_depth.m               │  Depth-dependent parameters (vertical habitat, feeding preferences)<br>
