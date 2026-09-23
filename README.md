@@ -21,8 +21,9 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 
 ## Repository structure
 ├──FIG/<br>
-├──SRC/<br>│ 
-│ └── Supplementary_paper.mlx         │  Supplementary script: generates Figures SB1–SB2 <br>
+├──SRC/<br>
+│ └── Figure_paper.m                  │  Main Paper's figures <br>
+│ └── Figure_supplement.m             │  Supplementary script: generates Figures for supplement A to D <br>
 │ └── baseparameters.m                │  Default model parameters (physiology, sizes, interactions)<br>
 │ └── baseparam_depth.m               │  Depth-dependent parameters (vertical habitat, feeding preferences)<br>
 │ └── baseparam_temp.m                │  Temperature scaling of physiological rates <br>
@@ -35,9 +36,8 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 │ └── PlotEcosystem.m                 │  Food-web visualization (Fig. 1) <br>
 │ └── plotdiet_squid.m                │  Squid diet composition plot (Fig. 3A, B) <br>
 │ └── plotmort_squid.m                │  Squid predation mortality plot (Fig. 3C)<br>
-│ └── ciplot.m Shaded                 │  confidence-interval helper function<br>
+│ └── ciplot.m                        │  Shaded area function<br>
 │ └── save_graph.m                    │  Figure export helper (PDF, PNG, SVG, EPS) <br>
-│ └── axes_formating.m                │  Axes default formatting helper <br>
 │ └── tempdata.mat                    │  Temperature depth profiles by region (loaded by calctemperature.m)
 
 ---
