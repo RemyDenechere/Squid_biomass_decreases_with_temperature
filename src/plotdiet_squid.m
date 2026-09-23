@@ -16,8 +16,8 @@ function plotdiet_squid(param, result, leg)
 w = param.wc;                                           % central weight (g)
 y = result.y;                                           % biomass (g/m^2) per size class
 
-Bin = floor(0.8*length(y));                             % index of the last 20% of the size classes
-yend = mean(y(Bin:end,:));                              % mean biomass of the last 20% of the size classes
+Bin = floor(0.8*length(y));                             % index of the last 20% of last time steps
+yend = mean(y(Bin:end,:));                              % mean biomass of the last 20% of last time steps
 ystage = param.ixFish(end);                             % number of size classes
 ysmall = param.nstage - param.nstage*2/3;               % number of juvenile size classes
 % index of the first size class of the small squid
@@ -44,8 +44,7 @@ colorSet =  [0      0.5      0;
 
 % ! PLOT STACKED BAR PLOT OF THE DIET OF SQUID:
     small_Ceph = output(param.ix1(5)-4:param.ix2(5)-4,:);       % output for squid only ('-4' adjusts the index to account for the resource  )
-    small_Ceph = [small_Ceph; zeros(ysmall, ystage)];           % This might be wrong for squid because they have a different predation 
-    H = bar(small_Ceph, 'stacked');
+    H = bar(small_Ceph, 'stacked');                             % Plot on top of each other the different prey for a size class 
      for i = 1:ystage
          H(i).FaceColor = colorSet(colspec(i),:);
          H(i).LineStyle = 'none';

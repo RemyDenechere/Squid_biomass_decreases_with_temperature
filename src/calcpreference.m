@@ -2,10 +2,17 @@ function[theta, depthDay, depthNight, avlocDay, avlocNight] = calcpreference(par
 %
 % Calculate overlap from depth distribution
 %
-
-% This part can be write in a more efficient way: matrix of Xloc for all
-% the size class for day and night: Then just unsing it once in the main
-% equation. 
+% INPUTS:
+%  param: structure with model parameters
+% OUTPUTS:
+%  theta: adjusted preference of each size class now including the depth distribution preference 
+%  depthDay: depth distribution during the day
+%  depthNight: depth distribution during the night
+%  avlocDay: average location during the day
+%  avlocNight: average location during the night
+%
+% Orignal code from P. Daniël Van Denderen,
+% modified by Remy Denechere <remy.denechere@proton.me>
 
 xrange = linspace(0, param.bottom,(param.bottom+1)); % depths
 % vertical migration depth: 
