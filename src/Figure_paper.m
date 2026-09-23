@@ -22,7 +22,6 @@ end
 
 figsave = true;             % Set to true to save figures   
 
-
 %% Ecosystem plot: 
 % Plot the ecosystem structure emerging from FEISTY-Squid
 % ----------------------------------------------------------------%
