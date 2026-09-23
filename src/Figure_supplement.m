@@ -256,7 +256,7 @@ for dp = 1:2 % Loop depth
         param.Q10m(param.ix1(5):param.ix2(5)) = Q10m(i);   
        
         for t = 1:10  % Loop Temperature: --------------------------------
-            param = baseparam_temp(param, 4, T(t));                      % Assumption that reference temperature for the system = 10
+            param = baseparam_temp(param, 4, T(t));                         % Assumption that reference temperature for the system = 10
             results = poem(param);                                          % Run the model with the current parameters
             y = mean(results.y(end-40:end,:));                              % Compute the mean biomass over the last 40 time steps         
 
@@ -303,3 +303,140 @@ xlabel(tlayout, 'Average T (°C)')
 ylabel(tlayout, 'Biomass (g ww m^{-2})')
 
 save_graph(fig3, 'pdf', [save_dir,'Sens_temp_Q10_fish_and_Squid'], 16, 8)
+
+%% Sensitivity on zooplankton productivity with changing temperature
+%
+% Here, we run a zooplankton productivity sensitivity analysis of the FEISTY-squid at 
+% 3 temperatures (10°C: base temperature of the model which correspond to the standard temperature of the Q10,
+% 1°C, and 35°C) 
+% This is similar to what is done in the main figures, but with a wider
+% range of temperature, it allows us to confirm that colder and warmer
+% temperature have a consistent effect on ecosystem structure regardless of
+% the value of T. 
+% 
+% ---------------------------------------------------------------------------------------%
+
+% CLEAR EXISTING FIGURE:
+if exist("fig4")
+    clf(fig4)
+end
+fig4 = figure();                                    % Define figure
+
+% Set up range of parameters: ---------------------------------------------
+depth = [50 2000];                                  % Shallow and very deep ocean (m)                                         
+Zoo_prod = linspace(5, 150, 40);                    % vector for Zoo production (g WW yr-1)
+param = baseparameters();                           % set up basic param
+titlelab = {'A. Shelf system', 'B. Open Ocean'};    % titles
+temp = [1 35];                                      % Temperature experiments (°C)
+LineStyl = {':', '--'};                             % Line style for temperature experiments
+color_temp = [0.30, 0.75, 0.93;...                  % Color for temperature effect
+              0.85, 0.33 ,0.10];                    % Light blue for 8°C and light red for 12°C
+Visibility_temp = {'on', 'off'};                    % Define visibility for legend 
+Visibility_sp = {'off', 'on'};
+
+% SIMULATIONS AND PLOTS : ---------------------------------------------
+t = tiledlayout(1, 2, TileSpacing='compact', Padding= 'compact');
+
+for dp = 1:length(depth) %! loop depth 
+    param = baseparam_depth(param, depth(dp));     % Depth specific parameters
+    Bi = zeros(length(Zoo_prod), param.nSpecies);  % Storage variable biomass to compare with other temperature
+    nexttile                                       % Change subplot location for each depth
+    param = baseparam_temp(param, 4, 10);          % Temperature ref     
+
+    for i = 1:length(Zoo_prod) %! Loop zooplankton productivity
+        param.K =  [Zoo_prod(i), Zoo_prod(i), 0, 0];  % Defines zooplankton productivity for each resource in the model
+
+        % SET INITIAL CONDITIONS OVER THE SIMULATIONS: -----------------------------
+        if i == 1 % 1st run Initial condition
+            param.y0 = [0.1*param.K 0.01*param.B0];           
+        else % Start from previous final state. 
+            param.y0 = results.y(end, :) + [0.1*param.K param.B0];
+        end
+        
+        % NO MESOPELAGIC IN SHALLOW AREAS
+        if(param.bottom <= param.mesop)
+                param.y0(param.ix1(2):param.ix2(2)) = 0;
+        end
+
+        % RUN FEISTY-SQUID MODEL: ------------------------------------------------------
+        results = poem(param);                    % Run model
+
+        % AVERAGE LAST 40 TIME STEPS: 
+        yend = mean(results.y((end - 40):end,:));
+
+        % SUM AND AVERAGE OF BIOMASS PER FUNCTIONAL GROUP 
+        for ii = 1:param.nSpecies 
+            Bi(i, ii) =  sum(yend(:,param.ix1(ii):param.ix2(ii)));
+        end 
+    end% end loop zoo prod
+    
+    % TEMPERATURE EXPERIMENTS : ----------------------------
+    for T = 1:length(temp)% loop temperature 
+        param = baseparam_temp(param, 4, temp(T));       % Temperature effect on physiological parameters 
+                                                         % (4 same temperature in the whole whater column) 
+        Bi_T = zeros(length(Zoo_prod), param.nSpecies);  % Storage variable biomass to compare with other temperature  
+                                            
+        for i = 1:length(Zoo_prod) %! Loop zooplankton productivity
+            param.K =  [Zoo_prod(i), Zoo_prod(i), 0, 0]; % Gives zoo prod to param
+            
+            % SET INITIAL CONDITIONS OVER THE SIMULATIONS: -----------------------------
+            if i == 1 % 1st run Initial condition
+                param.y0 = [0.1*param.K 0.01*param.B0];           
+            else % Start from previous final state. 
+                param.y0 = results.y(end, :) + [0.1*param.K param.B0];
+            end
+            
+            % NO MESOPELAGIC IN SHALLOW AREAS
+            if(param.bottom <= param.mesop)
+                    param.y0(param.ix1(2):param.ix2(2)) = 0;
+            end
+            
+            % RUN FEISTY-SQUID MODEL: ------------------------------------------------------
+            results = poem(param);
+
+            % AVERAGE LAST 40 TIME STEPS:
+            yend = mean(results.y((end - 40):end,:));
+    
+            % SUM AND AVERAGE OF BIOMASS PER FUNCTIONAL GROUP
+            for ii = 1:param.nSpecies 
+                Bi_T(i, ii) =  sum(yend(:,param.ix1(ii):param.ix2(ii)));
+            end 
+        end 
+        
+        % PLOT BIOMASS AT TEMPERATURE T: ----------------------------------
+        hold on
+        for sp = 1:param.nSpecies %! Plot biomass for each group  
+            ciplot(Bi(:, sp)', Bi_T(:, sp)', Zoo_prod, 'colour',  color_temp(T,:), ...
+                'alpha', 0.5, 'Linestyle', 'none', 'VisLegend', 'off');
+        end
+        % COLOR THE DIFFERENCE BETWEEN TEMPERATURE EXP (8 OR 12°C) AND BASELINE (10°C): 
+        ciplot(sum(Bi, 2), sum(Bi_T, 2), Zoo_prod, 'colour',  color_temp(T,:), ...
+                'alpha', 0.5, 'Linestyle', 'none', 'VisLegend', Visibility_temp{dp});
+    end % end loop temperature
+
+    % PLOT BIOMASS AT EXP TEMPERATURES: ----------------------------------
+    for sp = 1:param.nSpecies %! Plot biomass for each group                  
+        plot(Zoo_prod, Bi(:, sp)', 'LineWidth', param.LWidth(sp), ... 
+            'Color', param.Color(sp,:), 'HandleVisibility', Visibility_sp{dp})
+    end
+    plot(Zoo_prod, sum(Bi'), '--k', 'HandleVisibility', Visibility_sp{dp})
+    hold off 
+    title(titlelab{dp})
+    
+    % LEGEND 
+    if dp ==1
+        legend({'1°C', '35°C'} , 'Location', 'northeast', ...
+            'Color','none', 'EdgeColor', 'none')
+    else 
+        legend([param.SpId{:}, {'Total'}] , 'Location', 'northwest', ...
+            'Color','none', 'EdgeColor', 'none')
+    end 
+end
+    
+xlabel(t, 'Zooplankton productivity (g m^{-2} yr^{-1})')
+ylabel(t, 'Biomass (g m^{-2})')
+
+%! Save figure
+if figsave
+    save_graph(fig4, 'pdf', [save_dir 'Sens_Biomass_productivity_temp_1_35'], 16, 10)
+end
