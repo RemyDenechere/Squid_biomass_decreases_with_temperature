@@ -1,4 +1,6 @@
-# Historical squid biomass increase is not explained by rising temperature but rather by loss of top predators
+# Historical squid biomass increase is not explained by rising temperature but rather by loss of top predators 🦑
+
+
 
 Rémy Denéchère, P. Daniël van Denderen, and Ken H. Andersen
 
@@ -6,20 +8,21 @@ Rémy Denéchère, P. Daniël van Denderen, and Ken H. Andersen
 
 ---
 
-## Overview
+## 🔬Overview  
 
 This repository contains the MATLAB code used to generate all figures and analyses for the paper investigating two hypotheses for the historical
-increase in squid biomass: (1) loss of top predators due to fishing and (2) rising ocean temperatures.
+increase in squid biomass: **(1) loss of top predators** due to fishing and **(2) rising ocean temperatures**.
 
 The model is based on the **FEISTY-squid** framework (Denéchère et al., 2024), a size- and trait-based model of upper trophic level communities 
 that resolves five functional groups: small pelagic fish, large pelagic fish, demersal fish, mesopelagic fish, and squid.
 
-## Requirements
 
-- MATLAB R2023a or later (tested on R2026a)
+## 🧰 Requirements 
+
+- ![MATLAB](https://img.shields.io/badge/MATLAB-R2023a%2B-orange?style=flat&logo=Mathworks&logoColor=white) MATLAB R2023a or later (tested on R2026a)
 - No additional toolboxes are required beyond base MATLAB
 
-## Repository structure
+## 🗂️ Repository structure 
 ```
 ├──FIG/
 ├──SRC/
@@ -42,18 +45,17 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 │ └── tempdata.mat                    │  Temperature depth profiles by region (loaded by calctemperature.m)
 ```
 
----
 
-# Key parameters
 
+# 🎛️ Key parameters
 The main parameters controlling the experiments are defined in baseparameters.m and modified in the live scripts:
-  -  Depth: m
-  -  Zooplankton productivity: range 5–150 g WW m⁻² yr⁻¹
-  -  Fishing intensity: varied from 0.1 to 3 yr⁻¹ on large demersal (shelf) or large pelagic (open ocean) fish
-  -  Temperature: baseline 10 °C, tested at ±2 °C
-  -  Q₁₀ values: 1.88 (default Fish); sensitivity tested at 1.5 and 2.1 for clearance rate, maximum consumption, and metabolic cost. 
+  -  **Depth**: m
+  -  **Zooplankton production**: range 5–150 g WW m⁻² yr⁻¹
+  -  **Fishing intensity**: varied from 0.1 to 3 yr⁻¹ on large demersal (shelf) or large pelagic (open ocean) fish
+  -  **Temperature**: baseline 10 °C, tested at ±2 °C
+  -  **Q₁₀ values**: 1.88 (default Fish); sensitivity tested at 1.5 and 2.1 for clearance rate, maximum consumption, and metabolic cost. 
 
-# Model description
+# 🧬 Model description
 
 FEISTY-squid extends the FEISTY framework by adding squid as a fifth functional group with faster growth rates (5× higher than fish)
 and a distinct predator–prey size ratio (β = 50 for squid vs. 400 for fish). The model resolves:
@@ -65,7 +67,7 @@ and a distinct predator–prey size ratio (β = 50 for squid vs. 400 for fish). 
 Full model equations are documented in Denéchère et al. (2024).
 
 
-# Citation
+# 📖 Citation
 
 If you use this code, please cite:
 
@@ -75,7 +77,7 @@ but rather by loss of top predators. [Journal name], [volume], [pages].
 
 !! NOT YET PUBLISHED TO COMPLETE LATER !!
 
-# Contact
+# ✉️ Contact
 
 Rémy Denéchère — <remy.denechere@gmail.com>
 
