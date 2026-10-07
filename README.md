@@ -46,7 +46,6 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 ```
 
 
-
 # 🎛️ Key parameters
 The main parameters controlling the experiments are defined in baseparameters.m and modified in the live scripts:
   -  **Depth**: m
