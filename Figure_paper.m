@@ -1,6 +1,8 @@
 %% Squid biomass increase is not explain by rising temperature but rather loss of top predators.
 % This script generates the figures for the paper: 
 % "Squid biomass increase is not explain by rising temperature but rather loss of top predators."
+%
+% CONTENT: 
 %  - FigEco: Ecosystem structure
 %  - FigEa:  Effect of temperature on Available Energy
 %  - Fig 1:  Effect of fishing on squid and their predators
@@ -8,7 +10,7 @@
 %  - Fig 3:  Effect of temperature on Available Energy
 % 
 % Remy Denechere <remy.denechere@proton.me>
-% Based upon P. Daniël Van Denderen's work 
+% Based upon Denechere et al 2024 and P. Daniël Van Denderen's work 
 
 %% Initialization 
 clear all 
@@ -59,6 +61,7 @@ param = baseparameters();                                               % Base p
 T= linspace(0, 50, 50);                                                 % Temperature range (°C)
 R = 10.^([-2, -0.25, 1]) ;                                              % Resource abundance (g) for the 3 different scenarios
 
+% CALCULATE PHYSIOLOGICAL PROCESSES: --------------------------------------
 Cmax = param.Q10(1).^((T-10)/10)*param.h(1)*param.sizes(5)^-0.25;        % Maximum consumption rate (Cmax) 
 V = param.Q10(1).^((T-10)/10)*param.gamma*param.sizes(5)^-0.25;          % Ingestion rate (V)
 Mc = param.Q10(1).^((T-10)/10)*param.met(1)*param.sizes(5)^-0.25;        % Metabolic cost (Mc)
@@ -66,7 +69,7 @@ Ea = param.epsAssim * Cmax.*(V.*R'./(V.*R' + Cmax)) - Mc;                % Avail
 
 figEa = figure();
 
-% PLOT : ---------------------------------------------------------
+% PLOT : ------------------------------------------------------------------
 plot(T, Ea, 'LineWidth', 1.5)
 hold on 
 plot(T, Mc, 'k--','LineWidth', 1.5)
@@ -119,82 +122,82 @@ fig1 = figure();                                % plot in figure 1
 % CREATE TILED LAYOUT FOR PANEL PLOT:
 t = tiledlayout(1, 2, TileSpacing="compact", Padding="compact");
 
-% SIMULATIONS :-------------------------------------------------------------
+% SIMULATIONS :------------------------------------------------------------
 for dp = 1:length(depth) % Loop depths
     param = baseparam_depth(param, depth(dp));  % Set up depth related parameters 
     k = k+1;                                    % add to count
 
-        for j=1:length(FISHING) % Loop fishing 
-    
-            % DEFINE FISHING EFFORT FOR EACH FUNCTIONAL GROUP :------------
-            if dp == 1 % shallow region demersal as squid predator 
-                param.Fi(4) = FISHING(j);
-            else % large pelagics as squid predators
-                param.Fi(3) = FISHING(j);
-            end
-    
-            % CALCULATION OF FISHING MORTALITY: ----------------------------
-            F = [];
-            for fi = 1:param.nSpecies
-                % FISHING MORTALITY EQUATION
-                F = [F, param.Fi(fi) * (1+(param.wc(param.ix1(fi):param.ix2(fi))...
-                    ./(param.wu(param.ix2(fi))*0.05)).^(-3)).^(-1)];
-            end
-            param.F = F';
-            
-            % INITIAL CONDITIONS: ------------------------------------------
-            if j == 1 % Define initial condition for 1st simulation 
-                param.y0 = [0.1*param.K 0.01*param.B0];           
-            else % start from previous final state for later simulation 
-                param.y0 = results.y(end, :) + [0.1*param.K param.B0];
-            end
-    
-            % REMOVE MESOPELAGIC FISH IN SHALLOW ARREAS --------------------
-            if depth(dp) < param.mesop
-                param.y0(param.ix1(2):param.ix2(3))=0;        
-            end
-           
-            % CORE SIMULATION OF FEISTY-squid: 
-            results = poem(param);
-            y = results.y;                  % Extract biomass
-            yend = y((end - 30):end,:);     % Take last 40 time steps
-    
-            % sum and average of biomass per species: ----------------------
-            for ii = 1:param.nSpecies 
-                Bi(j, ii) =  sum(mean(yend(:, param.ix1(ii):param.ix2(ii))'));
-            end
-        end % end loop fishing 
-        
-        nexttile
+    for j=1:length(FISHING) % Loop fishing 
 
-        % PLOT BIOMASS PER FUNCTIONAL GROUP: -------------------------------
-        Sp_plot = [];                       % Define index of functional group (sp) to plot 
-        hold on 
-        for sp = [1, 3, 4, 5, 2]            % change the order for legend
-            if sum(Bi(:, sp)) == 0          % if biomass = 0 don't plot the functional group. 
-            else 
-                Sp_plot = [Sp_plot, sp];    % Keep track of the functional group plotted
-                plot(FISHING, Bi(:, sp)', ...
-                    '-',  'LineWidth', param.LWidth(sp),...
-                    'color', param.Color(sp, :))
-            end 
+        % DEFINE FISHING EFFORT FOR EACH FUNCTIONAL GROUP :------------
+        if dp == 1 % shallow region demersal as squid predator 
+            param.Fi(4) = FISHING(j);
+        else % large pelagics as squid predators
+            param.Fi(3) = FISHING(j);
         end
-        % PLOT TOTAL BIOMASS IN THE SYSTEM:
-        plot(FISHING, sum(Bi, 2) , 'k--',  'LineWidth', param.LWidth(3))
-        hold off 
+
+        % CALCULATION OF FISHING MORTALITY: ---------------------------
+        F = [];
+        for fi = 1:param.nSpecies
+            % FISHING MORTALITY EQUATION
+            F = [F, param.Fi(fi) * (1+(param.wc(param.ix1(fi):param.ix2(fi))...
+                ./(param.wu(param.ix2(fi))*0.05)).^(-3)).^(-1)];
+        end
+        param.F = F';
         
-        % DEPTH DEPENDENT LABELING: ----------------------------------------
-        if dp == 1 
-            title('A. Shelf system')
-            xlabel('Fishing on demersal (yr^{-1})')
-        else 
-            xlabel('Fishing on large pelagic (yr^{-1})')
-            title('B. Open Ocean')
-            legend({param.SpId{Sp_plot}, 'Total'}, ... % Put in legend only the functional group plotted
-                'Location','best', ...
-                'Box','off', 'Color', 'none', 'EdgeColor', 'none')
+        % INITIAL CONDITIONS: -----------------------------------------
+        if j == 1 % Define initial condition for 1st simulation 
+            param.y0 = [0.1*param.K 0.01*param.B0];           
+        else % start from previous final state for later simulation 
+            param.y0 = results.y(end, :) + [0.1*param.K param.B0];
         end
-        set(gca, 'FontSize', 11); % Modify the font size of the figure 
+
+        % REMOVE MESOPELAGIC FISH IN SHALLOW ARREAS -------------------
+        if depth(dp) < param.mesop
+            param.y0(param.ix1(2):param.ix2(3))=0;        
+        end
+       
+        % CORE SIMULATION OF FEISTY-squid: 
+        results = poem(param);
+        y = results.y;                  % Extract biomass
+        yend = y((end - 30):end,:);     % Take last 40 time steps
+
+        % sum and average of biomass per species: ---------------------
+        for ii = 1:param.nSpecies 
+            Bi(j, ii) =  sum(mean(yend(:, param.ix1(ii):param.ix2(ii))'));
+        end
+    end % end loop fishing 
+    
+    nexttile
+
+    % PLOT BIOMASS PER FUNCTIONAL GROUP: -------------------------------
+    Sp_plot = [];                       % Define index of functional group (sp) to plot 
+    hold on 
+    for sp = [1, 3, 4, 5, 2]            % change the order for legend
+        if sum(Bi(:, sp)) == 0          % if biomass = 0 don't plot the functional group. 
+        else 
+            Sp_plot = [Sp_plot, sp];    % Keep track of the functional group plotted
+            plot(FISHING, Bi(:, sp)', ...
+                '-',  'LineWidth', param.LWidth(sp),...
+                'color', param.Color(sp, :))
+        end 
+    end
+    % PLOT TOTAL BIOMASS IN THE SYSTEM:
+    plot(FISHING, sum(Bi, 2) , 'k--',  'LineWidth', param.LWidth(3))
+    hold off 
+    
+    % DEPTH DEPENDENT LABELING: ----------------------------------------
+    if dp == 1 
+        title('A. Shelf system')
+        xlabel('Fishing on demersal (yr^{-1})')
+    else 
+        xlabel('Fishing on large pelagic (yr^{-1})')
+        title('B. Open Ocean')
+        legend({param.SpId{Sp_plot}, 'Total'}, ... % Put in legend only the functional group plotted
+            'Location','best', ...
+            'Box','off', 'Color', 'none', 'EdgeColor', 'none')
+    end
+    set(gca, 'FontSize', 11); % Modify the font size of the figure 
 end % end loop depth 
 
 ylabel(t, 'Biomass (g WW m ^{-2})')
@@ -338,7 +341,7 @@ color_temp = [0.30, 0.75, 0.93;...                  % Color for temperature effe
 Visibility_temp = {'on', 'off'};                    % Define visibility for legend 
 Visibility_sp = {'off', 'on'};
 
-% SIMULATIONS AND PLOTS : ---------------------------------------------
+% SIMULATIONS AND PLOTS : -------------------------------------------------
 t = tiledlayout(1, 2, TileSpacing='compact', Padding= 'compact');
 
 for dp = 1:length(depth) %! loop depth 
@@ -350,7 +353,7 @@ for dp = 1:length(depth) %! loop depth
     for i = 1:length(Zoo_prod) %! Loop zooplankton productivity
         param.K =  [Zoo_prod(i), Zoo_prod(i), 0, 0];  % Defines zooplankton productivity for each resource in the model
 
-        % SET INITIAL CONDITIONS OVER THE SIMULATIONS: -----------------------------
+        % SET INITIAL CONDITIONS OVER THE SIMULATIONS: --------------------
         if i == 1 % 1st run Initial condition
             param.y0 = [0.1*param.K 0.01*param.B0];           
         else % Start from previous final state. 
@@ -362,7 +365,7 @@ for dp = 1:length(depth) %! loop depth
                 param.y0(param.ix1(2):param.ix2(2)) = 0;
         end
 
-        % RUN FEISTY-SQUID MODEL: ------------------------------------------------------
+        % RUN FEISTY-SQUID MODEL: -----------------------------------------
         results = poem(param);                    % Run model
 
         % AVERAGE LAST 40 TIME STEPS: 
@@ -383,7 +386,7 @@ for dp = 1:length(depth) %! loop depth
         for i = 1:length(Zoo_prod) %! Loop zooplankton productivity
             param.K =  [Zoo_prod(i), Zoo_prod(i), 0, 0]; % Gives zoo prod to param
             
-            % SET INITIAL CONDITIONS OVER THE SIMULATIONS: -----------------------------
+            % SET INITIAL CONDITIONS OVER THE SIMULATIONS: ----------------
             if i == 1 % 1st run Initial condition
                 param.y0 = [0.1*param.K 0.01*param.B0];           
             else % Start from previous final state. 
@@ -395,7 +398,7 @@ for dp = 1:length(depth) %! loop depth
                     param.y0(param.ix1(2):param.ix2(2)) = 0;
             end
             
-            % RUN FEISTY-SQUID MODEL: ------------------------------------------------------
+            % RUN FEISTY-SQUID MODEL: -------------------------------------
             results = poem(param);
 
             % AVERAGE LAST 40 TIME STEPS:
@@ -418,7 +421,7 @@ for dp = 1:length(depth) %! loop depth
                 'alpha', 0.5, 'Linestyle', 'none', 'VisLegend', Visibility_temp{dp});
     end % end loop temperature
 
-    % PLOT BIOMASS AT EXP TEMPERATURES: ----------------------------------
+    % PLOT BIOMASS AT EXP TEMPERATURES: -----------------------------------
     for sp = 1:param.nSpecies %! Plot biomass for each group                  
         plot(Zoo_prod, Bi(:, sp)', 'LineWidth', param.LWidth(sp), ... 
             'Color', param.Color(sp,:), 'HandleVisibility', Visibility_sp{dp})
@@ -468,8 +471,8 @@ fig4 = figure();                                    % Define figure
 
 % Set up range of parameters: ---------------------------------------------
 depth = [50 2000];                                  % Shallow and open deep ocean (m)                                         
-Zoo_prod_LOW  = 75;                                  % Low zooplankton production (g WW yr-1)
-Zoo_prod_HIGH = 200;                                % High zooplankton production (g WW yr-1)
+Zoo_prod_LOW  = 150;                                  % Low zooplankton production (g WW yr-1)
+Zoo_prod_HIGH = 150;                                % High zooplankton production (g WW yr-1)
 param = baseparameters();                           % set up basic param
 titlelab = {'A. Shelf system', 'B. Open Ocean'};    % title labels
 TIME_RUN = 40;                                      % Number of years to run the model after production burst
@@ -507,7 +510,7 @@ for dp = 1:length(depth) %! loop depth
     param.K =  [Zoo_prod_HIGH, Zoo_prod_HIGH, 0, 0];
 
     % REINITIALISE FROM previous final state. 
-    param.y0 = results.y(end, :) + [0.1*param.K param.B0];
+    param.y0 = results.y(end, :);
 
     % RUN THE MODEL FOR TIME_RUN YEARS:
     param.tEnd=TIME_RUN;          % Reset the running time
@@ -523,7 +526,7 @@ for dp = 1:length(depth) %! loop depth
     for ii = 1:param.nSpecies 
         Bi(:, ii) =  sum(yend2(:,param.ix1(ii):param.ix2(ii)), 2);
     end 
-   Bi = Bi(RUN_TIME-(TIME_VISUALISATION-1): RUN_TIME+TIME_VISUALISATION, :);
+   Bi = Bi([TIME_RUN-(TIME_VISUALISATION-1): TIME_RUN+TIME_VISUALISATION], :);
 
     % PLOT BIOMASS AT TEMPERATURE T: ----------------------------------
     hold on 
@@ -549,7 +552,7 @@ for dp = 1:length(depth) %! loop depth
         legend([param.SpId{:}, {'Total'}] , 'Location', 'best', ...
             'Color','none', 'EdgeColor', 'none')
     else 
-        %  Auto-generated by MATLAB on 07-Oct-2026 15:11:24
+        % Auto-generated by MATLAB on 07-Oct-2026 15:11:24
         % Create textbox
         annotation(fig4,'textbox',...
             [0.219543046357616 0.676000798642309 0.121516556291391 0.126984126984127],...
@@ -562,6 +565,7 @@ for dp = 1:length(depth) %! loop depth
             'BackgroundColor',[1 1 1]);
     end   
 end
+
 %     
 xlabel(t, 'Simulation time (yr)')
 ylabel(t, 'Biomass (g m^{-2})')

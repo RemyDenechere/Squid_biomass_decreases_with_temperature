@@ -2,6 +2,8 @@
 % This script generates the figures of the supplementary materials for the paper: 
 % "Squid biomass increase is not explain by rising temperature but rather loss of top predators."
 % 
+% CONTENT:  
+%
 % Remy Denechere <remy.denechere@proton.me>
 
 %% Initialization 
