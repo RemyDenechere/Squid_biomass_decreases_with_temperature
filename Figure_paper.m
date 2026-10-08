@@ -12,10 +12,12 @@
 
 %% Initialization 
 clear all 
-clf 
+
+% ADD SOURCE TO PATH:
+addpath("src\")
 
 % CREATE FIGURE DIRECTORY IF NOT EXISTING
-save_dir = '../Fig/';       % path to save figures
+save_dir = 'Fig/';       % path to save figures
 if ~exist(save_dir)         % check if the directory exists
     mkdir(save_dir)         % create the directory if it does not exist
 end 
@@ -441,4 +443,131 @@ ylabel(t, 'Biomass (g m^{-2})')
 %! Save figure
 if figsave
     save_graph(fig3, 'pdf', [save_dir 'Sens_Biomass_productivity_temp'], 16, 10)
+end
+
+%% Experimentation: fluctuation of resource production. 
+%
+% Here, I show how squid behaves, when we impose a rapid change of resource
+% production. This experimentation aims to test whether squid could benefit
+% from a rapid change in resource production, supporting the hypothesis
+% that are good invaders!
+% 
+% PARAM: 
+% depth = (50 and 2000)
+% 
+% 1st I run the model at low productivity then impose a instantaneous rise
+% in zooplankton production
+% ---------------------------------------------------------------------------------------%
+
+% CLEAR EXISTING FIGURE:
+if exist("fig4")
+    clear fig4
+end
+
+fig4 = figure();                                    % Define figure
+
+% Set up range of parameters: ---------------------------------------------
+depth = [50 2000];                                  % Shallow and open deep ocean (m)                                         
+Zoo_prod_LOW  = 75;                                  % Low zooplankton production (g WW yr-1)
+Zoo_prod_HIGH = 200;                                % High zooplankton production (g WW yr-1)
+param = baseparameters();                           % set up basic param
+titlelab = {'A. Shelf system', 'B. Open Ocean'};    % title labels
+TIME_RUN = 40;                                      % Number of years to run the model after production burst
+TIME_VISUALISATION = 20; 
+
+% SIMULATIONS AND PLOTS : ---------------------------------------------
+t = tiledlayout(1, 2, TileSpacing='compact', Padding= 'compact');
+
+for dp = 1:length(depth) %! loop depth 
+    param = baseparam_depth(param, depth(dp));      % Depth specific parameters
+    nexttile                                        % Change subplot location for each depth
+    param = baseparam_temp(param, 4, 10);           % Temperature ref     
+    param.K =  [Zoo_prod_LOW, Zoo_prod_LOW, 0, 0];  % Start at low resource production
+
+    % SET INITIAL CONDITIONS FOR THE SIMULATIONS: -----------------------------
+    param.y0 = [0.1*param.K 0.01*param.B0]; 
+    
+    % NO MESOPELAGIC IN SHALLOW AREAS
+    if(param.bottom <= param.mesop)
+            param.y0(param.ix1(2):param.ix2(2)) = 0;
+    end
+
+    % RUN FEISTY-SQUID MODEL: ------------------------------------------------------
+    % the models runs by default for 150 times step, and reaches Steady
+    % State.
+    results = poem(param);                  
+
+    % SAVE ONLY THE LAST TIME_RUN TIME STEPS: 
+    yend = results.y((end - (TIME_RUN-1)):end,:);
+    
+    %: ------------------------------------------------------
+    % !!  IMPOSE A BURST OF RESOURCE PRODUCTION: !!
+    %: ------------------------------------------------------
+    % NEW PRODUCTIVITY:
+    param.K =  [Zoo_prod_HIGH, Zoo_prod_HIGH, 0, 0];
+
+    % REINITIALISE FROM previous final state. 
+    param.y0 = results.y(end, :) + [0.1*param.K param.B0];
+
+    % RUN THE MODEL FOR TIME_RUN YEARS:
+    param.tEnd=TIME_RUN;          % Reset the running time
+    results = poem(param);
+
+    % SAVE THE RESULTS AFTER PRODUCTION BURST: 
+    yend2 = [yend; results.y(2:end,:)];             % exclude first time step which is the initial conditions already the last value of yend
+    clear yend; 
+
+    Bi = zeros(TIME_RUN*2, param.NbSizeGrp); 
+
+    % SUM AND AVERAGE OF BIOMASS PER FUNCTIONAL GROUP: ----------------
+    for ii = 1:param.nSpecies 
+        Bi(:, ii) =  sum(yend2(:,param.ix1(ii):param.ix2(ii)), 2);
+    end 
+   Bi = Bi(RUN_TIME-(TIME_VISUALISATION-1): RUN_TIME+TIME_VISUALISATION, :);
+
+    % PLOT BIOMASS AT TEMPERATURE T: ----------------------------------
+    hold on 
+    for sp = 1:param.nSpecies %! Plot biomass for each group                  
+        plot(1:(TIME_VISUALISATION*2), ...
+            Bi(:, sp)', ...            % takes TIME_VISUALISATION # of biomass before and after RUN_TIME
+            'LineWidth', param.LWidth(sp), ...          % Line thickness 
+            'Color', param.Color(sp,:))                 % Line color 
+    end
+    % PLOT SUM OF BIOMASS OF ALL FUNCTIONAL TYPES:
+    plot(1:(TIME_VISUALISATION*2), sum(Bi'), '--k')
+
+    % ADD COSMETICS FOR VISUALISATION: 
+    axes = gca;                                     % Get axes parameters
+    plot([TIME_VISUALISATION TIME_VISUALISATION], axes.YLim, 'r--', 'LineWidth', 1.5)
+    hold off 
+
+    title(titlelab{dp})
+    set(gca, 'Box', 'on'); 
+    
+    % LEGEND 
+    if dp ==2
+        legend([param.SpId{:}, {'Total'}] , 'Location', 'best', ...
+            'Color','none', 'EdgeColor', 'none')
+    else 
+        %  Auto-generated by MATLAB on 07-Oct-2026 15:11:24
+        % Create textbox
+        annotation(fig4,'textbox',...
+            [0.219543046357616 0.676000798642309 0.121516556291391 0.126984126984127],...
+            'Color',[1 0 0],...
+            'String','Production Burst',...
+            'HorizontalAlignment','center',...
+            'FontSize',11,...
+            'FitBoxToText','off',...
+            'EdgeColor',[1 1 1],...
+            'BackgroundColor',[1 1 1]);
+    end   
+end
+%     
+xlabel(t, 'Simulation time (yr)')
+ylabel(t, 'Biomass (g m^{-2})')
+title(t, ['Production burst experiment ' num2str(Zoo_prod_LOW) ' to ' num2str(Zoo_prod_HIGH) ' g WW yr-1'])
+
+%! Save figure
+if figsave
+    save_graph(fig4, 'pdf', [save_dir 'Production_burst_experiment_' num2str(Zoo_prod_LOW)  '_to_'  num2str(Zoo_prod_HIGH)], 16, 10)
 end
