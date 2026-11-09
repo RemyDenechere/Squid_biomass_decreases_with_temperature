@@ -36,7 +36,7 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
 │ └── calcEncounter.m                 │  Encounter rates, feeding level, and predation mortality 
 │ └── calcpreference.m                │  Vertical distribution and predator–prey overlap matrix 
 │ └── calctemperature.m               │  Temperature scaling using Q₁₀ and depth profiles 
-│ └── calcNu.m Growth                 │  rate and biomass flux between size classes 
+│ └── calcNu.m                        │  Growth rate and biomass flux between size classes 
 │ └── PlotEcosystem.m                 │  Food-web visualization (Fig. 1) 
 │ └── plotdiet_squid.m                │  Squid diet composition plot (Fig. 3A, B) 
 │ └── plotmort_squid.m                │  Squid predation mortality plot (Fig. 3C)
