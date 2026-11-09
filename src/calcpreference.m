@@ -12,7 +12,8 @@ function[theta, depthDay, depthNight, avlocDay, avlocNight] = calcpreference(par
 %  avlocNight: average location during the night
 %
 % Orignal code from P. Daniël Van Denderen,
-% modified by Remy Denechere <remy.denechere@proton.me>
+% modified by Remy Denechere <remy.denechere@gmail.com>
+% -------------------------------------------------------------------------
 
 xrange = linspace(0, param.bottom,(param.bottom+1)); % depths
 % vertical migration depth: 

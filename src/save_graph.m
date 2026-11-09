@@ -9,6 +9,7 @@ function save_graph(fig, FileType, name, w, h)
 %   5) h: height in cm
 % See also PRINT
 % Rémy Denéchère 4/12/2024
+% -------------------------------------------------------------------------
 arguments 
     fig  = gcf() 
     FileType  {mustBeMember(FileType, ["pdf", "jpeg", "png", "eps", "svg"])} = "pdf"
@@ -16,7 +17,6 @@ arguments
     w         {mustBeNumeric}   = 12
     h         {mustBeNumeric}   = 12
 end 
-
 
 FileType = ['-d', char(FileType)]; 
 

@@ -5,7 +5,8 @@ function  plotmort_squid(param, result, linest)
 %  result: structure with model outputs
 %  linest : The Line type for the plot (e.g. '-', '--', ':', '-.')
 %  Remy Denechere <remy.denechere@proton.me>
-%  Based upon P. Daniël Van Denderen's work 
+%  Based upon P. Daniël Van Denderen's work
+% -------------------------------------------------------------------------
 arguments
     param struct        
     result struct

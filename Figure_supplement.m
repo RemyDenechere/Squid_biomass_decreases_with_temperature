@@ -1,13 +1,15 @@
 %% Supplementary: 
 % This script generates the figures of the supplementary materials for the paper: 
-% "Squid biomass increase is not explain by rising temperature but rather loss of top predators."
+% "Squid biomass increase is not explained by rising temperature but rather loss of top predators."
 % 
 % CONTENT:  
 %
-% Remy Denechere <remy.denechere@proton.me>
+% CONTACT INFO:
+% Remy Denechere <remy.denechere@gmail.com>
+% -------------------------------------------------------------------------
 
 %% Initialization 
-clear all 
+clear 
 clf 
 
 % CREATE FIGURE DIRECTORY IF NOT EXISTING
@@ -35,7 +37,7 @@ depth = 50;                                     % Depth in m
 Zoo_prod = 100;                                 % Zooplankton production (g ww m-2 yr -1)           
 param = baseparameters();                       % Create parameter structure
 param = baseparam_depth(param, depth);          % Create depth related parameters
-param.K = [Zoo_prod  Zoo_prod  0  0];           % Define productivity for each resouce (based on van Denderen 2021)
+param.K = [Zoo_prod  Zoo_prod  0  0];           % Define productivity for each resource (based on van Denderen 2021)
 
 % CALCULATION OF FISHING MORTALITY: ----------------------------
 % USING LOW FISHING INTENSITY OF 0.1 yr-1 FOR EACH FUNCTIONAL GROUP
@@ -78,10 +80,11 @@ depth = 50;                                                    % depth in m
 Zoo_prod = 100;                                                % Zooplankton production (g ww m-2 yr -1)
 param = baseparameters();                                      % Create parameter structure
 param = baseparam_depth(param, depth);                         % Create depth related parameters
-param.K = [Zoo_prod  Zoo_prod  0  0];                          % assign productivity for each resouce (based on van Denderen 2021)
+param.K = [Zoo_prod  Zoo_prod  0  0];                          % assign productivity for each resource (based on van Denderen 2021)
 
 % CALCULATION OF FISHING MORTALITY: ----------------------------
 % USING HIGH FISHING INTENSITY OF 3 yr-1 FOR LARGE PELAGICS
+% Fi = [forage, mesopelagic, demersal, large pelagic, squid]
 param.Fi = [0.1, 0, 0.1, 3, 0.1];
 F = [];
 for fi = 1:param.nSpecies
@@ -111,7 +114,7 @@ set(gca, 'FontSize', 11)
 nexttile(4, [1, 3])
 plotmort_squid(param, results, '--')
 xlabel('Individual mass (g)')
-leg = legend('low', 'High'); 
+leg = legend('Low', 'High'); 
 title(leg, 'Fishing on Large pelagic')
 set(gca, 'FontSize', 11)
 
@@ -135,15 +138,15 @@ fig2 = figure();
 
 % PARAMETER SET : ---------------------------------------------------------
 depth = [50 2000];                              % Depth in m
-Zoo_prod = 150;                                 % Zooplankton production in mg m^-2 yr^-1              
+Zoo_prod = 150;                                 % Zooplankton production in g ww m^-2 yr-1             
 param = baseparameters();                       % Set base parameters structure
 T = linspace(8, 12, 10);                        % Set temperature range for sensitivity analysis
 TEMP = ones(10, param.nSpecies);                % Initialize temperature array
 param.K = [Zoo_prod Zoo_prod 0 0];              % Set productivity for each resource
 param.y0 = [0.1*param.K 0.01*param.B0];         % Set initial conditions for each species
 
-Q10  =  [1.88  1.88   1.5];                     % Q10 for consumption.
-Q10m =  [1.5   1.88   1.5];                     % Q10 for Standard metabolism. 
+Q10  =  [1.88  1.88   1.5];                     % Q10 for consumption and maximum consumption.
+Q10m =  [1.5   1.88   1.88];                     % Q10 for Standard metabolism. 
 linestyle = {':', '-', '--'};                   % Line styles for plotting each case
 
 % PLOT FIGURE: ------------------------------------------------------
@@ -155,7 +158,7 @@ for dp = 1:2% Loop depth
     param = baseparam_depth(param, depth(dp));
 
     % SET INITIAL CONDITIONS (no mesozooplankton in shallow areas)
-    if depth(dp) < 250
+    if depth(dp) < param.mesop
         param.y0(param.ix1(2):param.ix2(2)) = 0;
     end
     hold on 
@@ -165,7 +168,7 @@ for dp = 1:2% Loop depth
         param.Q10m(param.ix1(5):param.ix2(5)) = Q10m(i);
     
         for t = 1:10 % Loop Temperature: --------------------------------
-            param = baseparam_temp(param, 4, T(t));                        % Assumption that reference temperature for the system = 10
+            param = baseparam_temp(param, 4, T(t));                        % Assumption that reference temperature for the system = 10, 4 = no vertical scaling of temperature assumed constant over depth. 
             results = poem(param);                                         % Run the model with the current parameters
             y = mean(results.y(end-40:end,:));                             % Compute the mean biomass over the last 40 time steps
 
@@ -194,7 +197,8 @@ for dp = 1:2% Loop depth
         end 
         title(['Depth = ', num2str(depth(dp)), ' m'])
         set(gca, 'YScale', 'log', 'Ylim', [0.5 50]) % 
-
+        
+        % LABELS: 
         if dp == 1
             Leg = legend('Q_{10} > Q_{10m} ', 'Q_{10} = Q_{10m}', 'Q_{10} < Q_{10m}', 'Location', 'best');
         else
@@ -237,7 +241,7 @@ TEMP = ones(10, param.nSpecies);                        % Initialize temperature
 param.K = [Zoo_prod Zoo_prod 0 0];                      % Set productivity for each resource
 param.y0 = [0.1*param.K 0.01*param.B0];                 % Set initial conditions for each species
 
-Q10  =  [1   1.88   2.5];                               % Q10 for consumption.
+Q10  =  [1   1.88   2.5];                               % Q10 for consumption and maximum consumption.
 Q10m =  [1   1.88   2.5];                               % Q10 for Standard metabolism. 
 linestyle = {':', '-', '--'};                           % Line styles for plotting each case
 
@@ -248,7 +252,7 @@ for dp = 1:2 % Loop depth
     nexttile
     param = baseparam_depth(param, depth(dp));          % Set up depth parameters
     % REMOVE MESOZOO IN SHALLOW AREAS
-    if depth(dp) < 250
+    if depth(dp) < param.mesop
         param.y0(param.ix1(2):param.ix2(2)) = 0;
     end
     hold on 
@@ -286,9 +290,12 @@ for dp = 1:2 % Loop depth
                 'color', param.Color(ii, :), 'LineStyle', linestyle{i}, ...
                 'HandleVisibility', visibility(ii));
         end 
+
+        % AXES FORMATING AND TITLE:
         title(['Depth = ', num2str(depth(dp)), ' m'])
         set(gca, 'YScale', 'log', 'Ylim', [0.1 100]) % 
-
+        
+        % LEGENDS: 
         if dp == 1
             Leg = legend('Q_{10, Fish} > Q_{10, Squid} ', ...
                          'Q_{10, Fish} = Q_{10, Squid} ' , ...
@@ -300,12 +307,13 @@ for dp = 1:2 % Loop depth
     hold off
     Leg.Box = 'off'; Leg.EdgeColor = 'none'; Leg.Color = 'none';
 end
-
+% LABELS: 
 xlabel(tlayout, 'Average T (°C)')
 ylabel(tlayout, 'Biomass (g ww m^{-2})')
 
-save_graph(fig3, 'pdf', [save_dir,'Sens_temp_Q10_fish_and_Squid'], 16, 8)
-
+if figsave
+    save_graph(fig3, 'pdf', [save_dir,'Sens_temp_Q10_fish_and_Squid'], 16, 8)
+end
 %% Sensitivity on zooplankton productivity with changing temperature
 %
 % Here, we run a zooplankton productivity sensitivity analysis of the FEISTY-squid at 
@@ -320,13 +328,13 @@ save_graph(fig3, 'pdf', [save_dir,'Sens_temp_Q10_fish_and_Squid'], 16, 8)
 
 % CLEAR EXISTING FIGURE:
 if exist("fig4")
-    clf(fig4)
+    clear fig4
 end
 fig4 = figure();                                    % Define figure
 
 % Set up range of parameters: ---------------------------------------------
 depth = [50 2000];                                  % Shallow and very deep ocean (m)                                         
-Zoo_prod = linspace(5, 150, 40);                    % vector for Zoo production (g WW yr-1)
+Zoo_prod = linspace(5, 150, 40);                    % vector for Zoo production (g ww m^-2 yr-1)
 param = baseparameters();                           % set up basic param
 titlelab = {'A. Shelf system', 'B. Open Ocean'};    % titles
 temp = [1 35];                                      % Temperature experiments (°C)
@@ -375,7 +383,7 @@ for dp = 1:length(depth) %! loop depth
     % TEMPERATURE EXPERIMENTS : ----------------------------
     for T = 1:length(temp)% loop temperature 
         param = baseparam_temp(param, 4, temp(T));       % Temperature effect on physiological parameters 
-                                                         % (4 same temperature in the whole whater column) 
+                                                         % (4 same temperature in the whole water column) 
         Bi_T = zeros(length(Zoo_prod), param.nSpecies);  % Storage variable biomass to compare with other temperature  
                                             
         for i = 1:length(Zoo_prod) %! Loop zooplankton productivity

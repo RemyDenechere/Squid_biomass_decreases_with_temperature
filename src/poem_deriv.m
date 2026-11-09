@@ -8,6 +8,8 @@ function dydt = poem_deriv(t, y, param)
 %   param: structure with model parameters
 % OUTPUTS:
 %   dydt: vector of derivatives of the state variables (required by the ode solver)
+% -------------------------------------------------------------------------
+
 
 
 % EXTRACT VARIABLES FROM INPUTS:

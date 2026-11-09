@@ -1,6 +1,8 @@
 function param = baseparam_depth(param, depth)
-% Parameters related to depth 
-
+% Sets parameters relating to depth: 
+% Marting curve, feeding preference matrix based on day and night vertical 
+% distribution
+% -------------------------------------------------------------------------
 %
 % Habitat and interactions: -----------------------------------------------
 %

@@ -5,13 +5,12 @@
 % x data can be specified, otherwise plots against index values.
 % colour can be specified (eg 'k'). Defaults to blue.
 % Rémy Denéchère 02/29/2024 based on Raymond Reynolds 24/11/06 
-
-% Usage: 
+% USAGE: 
 % ciplot(lower,upper)       
 % ciplot(lower,upper,x)
 % ciplot(lower,upper,x,option)
 % ciplot(lower,upper,  option)
-
+% -------------------------------------------------------------------------
 
 function plot_handle = ciplot(lower, upper, x, option)
      arguments 

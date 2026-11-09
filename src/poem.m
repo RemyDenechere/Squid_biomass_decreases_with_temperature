@@ -1,13 +1,13 @@
 function result = poem(param, result)
-    % FUNCTION TO RUN THE ODE
-    % INPUTS:
-    %  param: structure with model parameters
-    %  result: structure with model outputs
-    % OUTPUTS:
-    %   result: structure with model outputs
-    % Originally written by P. Daniël Van Denderen, 
-    % modified by Remy Denechere <remy.denechere@proton.me>
-
+% FUNCTION TO RUN THE ODE
+% INPUTS:
+%  param: structure with model parameters
+%  result: structure with model outputs
+% OUTPUTS:
+%   result: structure with model outputs
+% Originally written by P. Daniël Van Denderen, 
+% modified by Remy Denechere <remy.denechere@proton.me>
+% -------------------------------------------------------------------------
 
 % INITIAL CONDITIONS:
 y0 = param.y0;

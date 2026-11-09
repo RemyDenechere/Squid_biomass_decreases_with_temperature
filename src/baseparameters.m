@@ -1,20 +1,14 @@
 function param = baseparameters(WinfSquid, A_squid)
-% It would be great to have this model in a more flexible way: where we
-% could specify the parameter physiology/prey pred interaction... with
-% default value based on fish
-
-%% TO DO
-% Check changes imposed by changing the maturation size. 
-
-%%
-clear param
-
-if nargin < 2
-    A_squid = 28;    
-end
-if nargin < 1
-    WinfSquid = 3.5*10^3;
+% Defines the default parameters for the simulations: 
+% Name, Size classes, indexes, predator pery interactions, physiological
+% parameters, temperature, and vertical distribution
+% -------------------------------------------------------------------------
+arguments 
+    WinfSquid   double  = 3.5*10^3              % Asymptotic size of squid
+    A_squid     double  = 28                    % 
 end 
+
+clear param
 
 % PLot parameters: 
 param.SpId = {'SmallPel','Mesopelagic','LargePel', 'Demersal', 'Squid'};  % Name of the functional groups
@@ -107,9 +101,9 @@ param.prefer = thetaP;
 %
 param.epsAssim = 0.7;                   % assimilation efficiency Fish
 param.epst = 0.1;                       % efficiency of benthos community
-param.A_squid = A_squid;
-param.h = zeros(1, param.NbSizeGrp); param.h(1:end) = 20; % Value fish
-param.h(param.ix1(5):param.ix2(5)) = param.A_squid/(param.epsAssim*(0.6 - 0.2)); % Value ceph
+param.A_squid = A_squid;                
+param.h = zeros(1, param.NbSizeGrp); param.h(1:end) = 20; % Coefficient for maximum consumption (Value fish)
+param.h(param.ix1(5):param.ix2(5)) = param.A_squid/(param.epsAssim*(0.6 - 0.2)); % Coefficient for maximum consumption all
 param.met = 0.2*param.h;  % maintenance costs, 20% of h
 param.q = 0.8; % clearance rate exponent:
 param.n = 3/4; % maximum consumption rate exponent

@@ -8,7 +8,8 @@ function [f, mortpred, Eavail, Enc] = calcEncounter(y, param)
 %   mortpred: predation mortality (1/yr) per size class
 %   Eavail: available energy (g/m^2/yr) per size class
 %   Enc: encounter rate (1/yr) per size class
-% Originally written by P. Daniël Van Denderen, modified by Remy Denechere <remy.denechere@proton.me>
+% Originally written by P. Daniël Van Denderen, modified by Remy Denechere <remy.denechere@gmail.com>
+% -------------------------------------------------------------------------
 
 % ENCOUNTER RATE (CLEARANCE RATE * PREFERENCE * BIOMASS OF PREY):
 Enc = param.V' .* param.theta.*y';

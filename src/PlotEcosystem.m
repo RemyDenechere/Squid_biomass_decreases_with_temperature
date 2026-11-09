@@ -1,12 +1,14 @@
 function PlotEcosystem(depth, pprod, sqd)
-    % Building app for Matlab app builder. The function first run the FEISTY
-    % model, then produce a plot for ecosystem. 
-    % INPUT VARIABLES:
-    %   1) depth: depth of the ecosystem (m)
-    %   2) pprod: primary productivity (g ww/m2)
-    %   3) sqd: presence (0) or absence (1) of squids in the ecosystem
-    % remy Denechere <remy.denechere@proton.me>
-    % see also van Denderen et al. 2020
+% Building app for Matlab app builder. The function first run the FEISTY
+% model, then produce a plot for ecosystem. 
+% INPUT VARIABLES:
+%   depth: depth of the ecosystem (m)
+%   pprod: primary productivity (g ww/m2)
+%   sqd: presence (0) or absence (1) of squids in the ecosystem
+% remy Denechere <remy.denechere@proton.me>
+% see also van Denderen et al. 2020
+% -------------------------------------------------------------------------
+
     arguments 
         depth {mustBeNumeric} = 750
         pprod {mustBeNumeric} = 130
