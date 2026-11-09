@@ -47,8 +47,7 @@ that resolves five functional groups: small pelagic fish, large pelagic fish, de
                                       │  by calctemperature.m)
 ```
 
-
-# 🎛️ Key parameters
+## 🎛️ Key parameters
 The main parameters controlling the experiments are defined in baseparameters.m and modified in the live scripts:
   -  **Depth**: m
   -  **Zooplankton production**: range 5–150 g WW m⁻² yr⁻¹
@@ -56,7 +55,7 @@ The main parameters controlling the experiments are defined in baseparameters.m 
   -  **Temperature**: baseline 10 °C, tested at ±2 °C
   -  **Q₁₀ values**: 1.88 (default Fish); sensitivity tested at 1.5 and 2.1 for clearance rate, maximum consumption, and metabolic cost. 
 
-# 🧬 Model description
+## 🧬 Model description
 
 FEISTY-squid extends the FEISTY framework by adding squid as a fifth functional group with faster growth rates (5× higher than fish)
 and a distinct predator–prey size ratio (β = 50 for squid vs. 400 for fish). The model resolves:
@@ -68,7 +67,7 @@ and a distinct predator–prey size ratio (β = 50 for squid vs. 400 for fish). 
 Full model equations are documented in Denéchère et al. (2024).
 
 
-# 📖 Citation
+## 📖 Citation
 
 If you use this code, please cite:
 
@@ -78,7 +77,7 @@ but rather by loss of top predators. [Journal name], [volume], [pages].
 
 !! NOT YET PUBLISHED TO COMPLETE LATER !!
 
-# ✉️ Contact
+## ✉️ Contact
 
 Rémy Denéchère — <remy.denechere@gmail.com>
 
